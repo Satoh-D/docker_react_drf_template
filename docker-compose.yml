@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    container_name: works_db
+    build: ./_docker-build/db
+    volumes:
+      - ./container/db:/works
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: userpassword
+      POSTGRES_USER: username
+      POSTGRES_DB: dbname
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 5432:5432
+  
+  backend:
+    container_name: works_backend
+    build: ./_docker-build/backend
+    volumes:
+      - ./container/backend:/works
+    environment:
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    privileged: true
+    stdin_open: true
+    tty: true
+
+  frontend:
+    container_name: works_frontend
+    build: ./_docker-build/frontend
+    volumes:
+      - ./container/frontend:/works
+    environment:
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 3000:3000
+    privileged: true
+    stdin_open: true
+    tty: true
+  
